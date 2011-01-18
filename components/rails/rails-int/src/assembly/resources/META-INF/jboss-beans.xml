@@ -11,4 +11,15 @@
   <bean name="RailsEnvYamlParsingDeployer"          class="org.torquebox.rails.deployers.RailsEnvYamlParsingDeployer"/>
   <bean name="RailsArchiveDirectoryMounter"         class="org.torquebox.rails.deployers.RailsArchiveDirectoryMounter"/>
 
+
+  <bean name="DefaultCacheManager" class="org.infinispan.manager.DefaultCacheManager"/>
+  <bean name="MemcachedServer" class="org.infinispan.server.memcached.MemcachedServer">
+    <install method="start">
+      <parameter class="java.lang.String">${jboss.infinispan.memcached.server.properties:META-INF/memcached.properties}</parameter>
+      <parameter class="org.infinispan.manager.EmbeddedCacheManager">
+        <inject bean="DefaultCacheManager"/>
+      </parameter>
+    </install>
+  </bean>
+
 </deployment>

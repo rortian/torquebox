@@ -40,6 +40,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-server-memcached</artifactId>
+      <version>4.2.0.FINAL</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rack-core</artifactId>
       <version>${project.version}</version>
