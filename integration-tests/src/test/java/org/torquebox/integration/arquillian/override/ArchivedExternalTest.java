@@ -20,11 +20,10 @@
 package org.torquebox.integration.arquillian.override;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
+import org.jboss.arquillian.api.RunAsClient;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
-@Run(RunModeType.AS_CLIENT)
+@RunAsClient
 public class ArchivedExternalTest extends ExplodedExternalTest {
 
     @Deployment

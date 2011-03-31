@@ -19,17 +19,16 @@
 
 package org.torquebox.integration.arquillian.rack;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
+import org.jboss.arquillian.api.RunAsClient;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
-@Run(RunModeType.AS_CLIENT)
+@RunAsClient
 public class NoRootRackupTest extends AbstractIntegrationTestCase {
 
     @Deployment

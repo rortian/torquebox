@@ -1,20 +1,19 @@
 <?xml version="1.0"?>
 
-<arquillian xmlns="http://jboss.com/arquillian"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns:jboss="urn:arq:org.jboss.arquillian.container.jbossas.managed_6">
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian-1.0.xsd">
 
   <engine>
-    <deploymentExportPath>/tmp</deploymentExportPath>
-    <maxDeploymentsBeforeRestart>${arquillian.max.deploys}</maxDeploymentsBeforeRestart>
+    <property name="deploymentExportPath">/tmp</property>
+    <property name="maxDeploymentsBeforeRestart">${arquillian.max.deploys}</property>
   </engine>
 
-  <jboss:container>
-    <jboss:profileName>default</jboss:profileName>
-    <jboss:bindAddress>127.0.0.1</jboss:bindAddress>
-    <jboss:httpPort>8080</jboss:httpPort>
-    <jboss:jbossHome>${integ.dist.dir}/jboss</jboss:jbossHome>
-    <jboss:javaVmArguments>-Xmx${arquillian.max.heap} -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default</jboss:javaVmArguments>
-  </jboss:container> 
+  <container>
+    <property name="profileName">default</property>
+    <property name="bindAddress">127.0.0.1</property>
+    <property name="httpPort">8080</property>
+    <property name="jbossHome">${integ.dist.dir}/jboss</property>
+    <property name="javaVmArguments">-Xmx${arquillian.max.heap} -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default</property>
+  </container> 
 
 </arquillian>

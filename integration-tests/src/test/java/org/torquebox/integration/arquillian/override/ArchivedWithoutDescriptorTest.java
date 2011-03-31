@@ -22,15 +22,14 @@ package org.torquebox.integration.arquillian.override;
 import java.util.zip.ZipFile;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
+import org.jboss.arquillian.api.RunAsClient;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Ignore;
 
 @Ignore
-@Run(RunModeType.AS_CLIENT)
+@RunAsClient
 public class ArchivedWithoutDescriptorTest extends ArchivedInternalTest {
 
     @Deployment
