@@ -15,8 +15,8 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'vfs/debug_filter'
-require 'vfs/ext/tempfile'
+require 'torquebox/vfs/debug_filter'
+require 'torquebox/vfs/ext/tempfile'
 
 class File
 
@@ -59,7 +59,7 @@ class File
       return args[0].to_s.dup if ( vfs_path?(args[0]) )
       if ( vfs_path?(args[1]) )
         expanded = expand_path_without_vfs(args[0], name_without_vfs(args[1].to_s))
-        return VFS.resolve_path_url(expanded)
+        return TorqueBox::VFS.resolve_path_url(expanded)
       end
       expand_path_without_vfs(*args)
     end
@@ -91,7 +91,7 @@ class File
     def mtime(filename)
       return mtime_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
 
-      vfs_url, child_path = VFS.resolve_within_archive(filename)
+      vfs_url, child_path = TorqueBox::VFS.resolve_within_archive(filename)
       raise Errno::ENOENT.new(filename) unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
@@ -105,7 +105,7 @@ class File
       return size_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
 
 
-      vfs_url, child_path = VFS.resolve_within_archive(filename)
+      vfs_url, child_path = TorqueBox::VFS.resolve_within_archive(filename)
       raise Errno::ENOENT.new(filename) unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
@@ -121,7 +121,7 @@ class File
     def size?(filename)
       return size_without_vfs?(filename) if ( File.exist_without_vfs?( filename ) )
 
-      vfs_url, child_path = VFS.resolve_within_archive(filename)
+      vfs_url, child_path = TorqueBox::VFS.resolve_within_archive(filename)
       return nil unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
@@ -136,14 +136,14 @@ class File
       name = name_without_vfs(filename)
       return stat_without_vfs(name) if ( File.exist_without_vfs?( name ) )
 
-      vfs_url, child_path = VFS.resolve_within_archive(filename)
+      vfs_url, child_path = TorqueBox::VFS.resolve_within_archive(filename)
       raise Errno::ENOENT.new(filename) unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
       virtual_file = virtual_file.get_child( child_path ) if child_path
       raise Errno::ENOENT.new(filename) unless virtual_file.exists?
 
-      VFS::File::Stat.new( virtual_file )
+      TorqueBox::VFS::File::Stat.new( virtual_file )
     end
 
     def lstat(filename)
@@ -188,7 +188,7 @@ class File
 
     def dirname(filename)
       dirname = dirname_without_vfs(name_without_vfs(filename))
-      vfs_path?(filename) ? VFS.resolve_path_url(dirname) : dirname
+      vfs_path?(filename) ? TorqueBox::VFS.resolve_path_url(dirname) : dirname
     end
 
     def join(*args)
@@ -243,17 +243,14 @@ class File
         begin
           yield name_without_vfs(name)
         rescue Errno::ENOENT => e
-          yield VFS.writable_path_or_error( name, e )
+          yield TorqueBox::VFS.writable_path_or_error( name, e )
         end
       end
       files.size
     end
 
     def name_without_vfs(filename)
-      # 1.9 - to_str became to_path for Pathnames
-      filename = filename.to_path if filename.respond_to?(:to_path) 
-      raise TypeError unless filename.respond_to?(:to_str)
-      name = filename.to_str.gsub("\\", "/")
+      name = path_to_str(filename).gsub("\\", "/")
       if vfs_path?(name) 
         result = name[4..-1]
         result.size==0 ? "/" : result
@@ -262,12 +259,19 @@ class File
       end
     end
 
+    def path_to_str(path)
+      # 1.9 - to_str became to_path for Pathnames
+      return path.to_path if path.respond_to?(:to_path) 
+      raise TypeError unless path.respond_to?(:to_str)
+      path.to_str
+    end
+    
     def vfs_path?(path)
       path.to_s =~ /^vfs:/
     end
 
     def virtual_file(filename)
-      VFS.virtual_file(filename)
+      TorqueBox::VFS.virtual_file(filename)
     end
   end
 

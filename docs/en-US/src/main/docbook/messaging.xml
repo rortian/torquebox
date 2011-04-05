@@ -779,7 +779,11 @@ messaging:
                   your processor. Processors are single-threaded, by
                   default, but you can increase this value to match
                   the number of concurrent messages you expect to
-                  receive.</entry>
+                  receive. Note that this value determines the number
+                  of consumers connected to the destination and thus
+                  you'll rarely want a concurrency greater than 1 for
+                  topics since that means you'll process duplicate
+                  messages.</entry>
                 </row>
 
                 <row>
@@ -789,6 +793,19 @@ messaging:
 
                   <entry>May be used to filter the messages dispatched
                   to your consumer.</entry>
+                </row>
+
+                <row>
+                  <entry><parameter>durable</parameter></entry>
+
+                  <entry>false</entry>
+
+                  <entry>Turns the processor into a durable subscriber. 
+                  Once a processor durably subscribes to a topic, if
+                  it disconnects any messages sent will be saved and
+                  delivered once the processor reconnects. This setting 
+                  only affects processors attached to topics,
+                  and is ignored for queue processors.</entry>
                 </row>
 
                 <row>
@@ -820,7 +837,10 @@ messaging:
       config:
         type: "premium"
         season: "fall"
-      concurrency: 2</programlisting></para>
+      concurrency: 2
+  /topics/bar:
+    MyBarHandler:
+      durable: true</programlisting></para>
 
             <para>Because the structure of the file is <ulink
             url="http://www.yaml.org">YAML</ulink>, proper indentation

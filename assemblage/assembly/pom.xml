@@ -184,6 +184,23 @@
       <classifier>jboss-beans</classifier>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>hornetq-configuration-all</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>hornetq-configuration-default</classifier>
+      <scope>provided</scope>
+    </dependency>
+
 
     <!-- other -->
 
@@ -417,32 +434,6 @@
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
-
-          <execution>
-            <id>install-jruby-vfs</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <stripVersion>true</stripVersion>
-              <outputDirectory>${stage.dir}/jruby/lib</outputDirectory>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.jboss</groupId>
-                  <artifactId>jboss-vfs</artifactId>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.jboss.logging</groupId>
-                  <artifactId>jboss-logging</artifactId>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>log4j</groupId>
-                  <artifactId>log4j</artifactId>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -543,6 +534,18 @@
             <configuration>
               <tasks>
                 <move file="${stage.dir}/share/rails/torquebox-rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb"/>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>create-apps-dir</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <mkdir dir="${stage.dir}/apps"/>
               </tasks>
             </configuration>
           </execution>

@@ -212,9 +212,11 @@
   <profiles>
     <profile>
       <id>ci</id>
+<!--
       <properties>
-        <arquillian.max.deploys>2</arquillian.max.deploys>
+        <arquillian.max.deploys>10</arquillian.max.deploys>
       </properties>
+-->
     </profile>
     <profile>
       <id>inplace</id>
@@ -422,28 +424,6 @@
             </fileset>
           </filesets>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-mutable-apps</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>process-test-resources</phase>
-            <configuration>
-              <outputDirectory>${project.build.directory}/apps</outputDirectory>
-              <overwrite>true</overwrite>
-              <resources>
-                <resource>
-                  <directory>mutable-apps/</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>

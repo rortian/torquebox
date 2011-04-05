@@ -32,12 +32,11 @@ class Dir
     # 1.9: open( dirname, <, :encoding => enc> )
     # We currently ignore the encoding.
     def open(str, options = nil, &block)
-      str = str.to_str
       if ( ::File.exist_without_vfs?( str ) )
         return open_before_vfs(str,&block)
       end
       #puts "open(#{str})"
-      result = dir = VFS::Dir.new( str )
+      result = dir = TorqueBox::VFS::Dir.new( str )
       #puts "  result = #{result}"
       unless result.exists?
         return open_before_vfs(str,&block)
@@ -87,7 +86,7 @@ class Dir
 
       #puts "base= #{base}"
 
-      vfs_url, child_path = VFS.resolve_within_archive( base )
+      vfs_url, child_path = TorqueBox::VFS.resolve_within_archive( base )
       #puts "vfs_url=#{vfs_url}"
       #puts "child_path=#{child_path}"
 
@@ -114,7 +113,7 @@ class Dir
         child_path = "" if child_path == "/"
         #puts "child_path=#{child_path}"
         #puts "base=#{base}"
-        filter = VFS::GlobFilter.new( child_path, matcher )
+        filter = TorqueBox::VFS::GlobFilter.new( child_path, matcher )
         #puts "filter is #{filter}"
         paths = starting_point.getChildrenRecursively( filter ).collect{|e|
           #path_name = e.path_name
@@ -138,20 +137,19 @@ class Dir
     end
 
     def rmdir(path)
-      name = File.name_without_vfs(path.to_str)
+      name = File.name_without_vfs(path)
       rmdir_before_vfs(name)
     end
     alias_method :unlink, :rmdir
     alias_method :delete, :rmdir
 
     def mkdir(path, mode=0777)
-      path = path.to_str
       mkdir_before_vfs( File.name_without_vfs(path), mode )
     rescue Errno::ENOTDIR => e
-      path = VFS.writable_path_or_error( path, e )
+      path = TorqueBox::VFS.writable_path_or_error( File.path_to_str(path), e )
       mkdir_before_vfs( path, mode )
     rescue Errno::ENOENT => e
-      path = VFS.writable_path_or_error( path, e )
+      path = TorqueBox::VFS.writable_path_or_error( File.path_to_str(path), e )
       mkdir_before_vfs( path, mode )
     end
 
@@ -159,23 +157,23 @@ class Dir
     # 1.9: new( dirname, <, :encoding => enc> )
     # We currently ignore the encoding.
     def new(string, options = nil)
-      if ( ::File.exist_without_vfs?( string.to_str ) )
+      if ( ::File.exist_without_vfs?( string ) )
         return new_before_vfs( string )
       end
-      VFS::Dir.new( string.to_str )
+      TorqueBox::VFS::Dir.new( string )
     end
 
     # 1.9 has an optional, undocumented options arg that appears to be
     # used for encoding. We'll ignore it for now, since JRuby does as
     # well. (see org.jruby.RubyDir.java)
     def entries(path, options = {})
-      if ( ::File.exist_without_vfs?( path.to_str ) )
-        return entries_before_vfs(path.to_str)
+      if ( ::File.exist_without_vfs?( path ) )
+        return entries_before_vfs(path)
       end
-      vfs_dir = org.jboss.vfs::VFS.child( path )
+      vfs_dir = org.jboss.vfs::VFS.child( File.path_to_str(path) )
       # Delegate to original entries if passed a nonexistent file
       unless vfs_dir.exists?
-        return entries_before_vfs( path.to_str )
+        return entries_before_vfs( path )
       end
       [ '.', '..' ] + vfs_dir.children.collect{|e| e.name }
     end
