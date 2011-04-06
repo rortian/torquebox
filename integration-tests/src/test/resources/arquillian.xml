@@ -9,11 +9,13 @@
   </engine>
 
   <container>
-    <property name="profileName">default</property>
-    <property name="bindAddress">127.0.0.1</property>
-    <property name="httpPort">8080</property>
-    <property name="jbossHome">${integ.dist.dir}/jboss</property>
-    <property name="javaVmArguments">-Xmx${arquillian.max.heap} -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default</property>
+    <configuration qualifier="jbossas" default="true">
+      <property name="profileName">default</property>
+      <property name="bindAddress">127.0.0.1</property>
+      <property name="httpPort">8080</property>
+      <property name="jbossHome">${integ.dist.dir}/jboss</property>
+      <property name="javaVmArguments">-Xmx${arquillian.max.heap} -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default</property>
+    </configuration>
   </container> 
 
 </arquillian>
