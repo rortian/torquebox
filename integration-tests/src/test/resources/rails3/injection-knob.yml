@@ -1,0 +1,13 @@
+---
+application:
+  RAILS_ROOT: ${basedir}/apps/rails3/injection
+  RAILS_ENV: development
+web:
+  context: injection
+queues:
+  /queues/injection_service:
+services:
+  Service:
+
+ruby:
+  version: ${ruby.compat.version}

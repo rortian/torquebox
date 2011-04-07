@@ -19,10 +19,16 @@
 
 package org.torquebox.common.pool;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
 import org.torquebox.common.spi.Pool;
 
 public class ManagedPool<T> implements Pool<T> {
+    
+    private Logger log = Logger.getLogger( this.getClass() );
 
     private SimplePool<T> pool;
     private PoolManager<T> poolManager;
@@ -36,7 +42,15 @@ public class ManagedPool<T> implements Pool<T> {
         this.poolManager = new PoolManager<T>( this.pool, factory, minInstances, maxInstances );
         this.pool.addListener( this.poolManager );
     }
-
+    
+    public void setName(String name) {
+        this.pool.setName( name );
+    }
+    
+    public String getName() {
+        return this.pool.getName();
+    }
+    
     public void setMinimumInstances(int minInstances) {
         this.poolManager.setMinimumInstances( minInstances );
     }
@@ -60,6 +74,11 @@ public class ManagedPool<T> implements Pool<T> {
     public void start() throws InterruptedException {
         this.poolManager.start();
         this.poolManager.waitForMinimumFill();
+    }
+    
+    public void stop() throws InterruptedException {
+        this.poolManager.stop();
+        this.poolManager.waitForEmpty();
     }
 
     @Override
@@ -87,6 +106,18 @@ public class ManagedPool<T> implements Pool<T> {
     
     public int getAvailable() {
         return availableSize();
+    }
+    
+    protected Set<T> getAllInstances() {
+        return this.pool.getAllInstances();
+    }
+    
+    protected Set<T> getBorrowedInstances() {
+        return this.pool.getBorrowedInstances();
+    }
+    
+    protected Set<T> getAvailableInstances() {
+        return this.pool.getAvailableInstances();
     }
 
     int size() {

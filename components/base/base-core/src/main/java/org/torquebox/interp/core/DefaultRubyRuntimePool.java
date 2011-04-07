@@ -19,6 +19,10 @@
 
 package org.torquebox.interp.core;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jruby.Ruby;
 import org.torquebox.common.pool.ManagedPool;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
@@ -36,8 +40,6 @@ import org.torquebox.interp.spi.RubyRuntimePool;
  * 
  */
 public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRuntimePool, DefaultRubyRuntimePoolMBean {
-
-    private String name;
 
     /**
      * Construct with a factory.
@@ -68,14 +70,6 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
         return (RubyRuntimeFactory) getInstanceFactory();
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     @Override
     public Object evaluate(String code) throws Exception {
         Ruby ruby = null;
@@ -88,6 +82,21 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
                 returnRuntime( ruby );
             }
         }
+    }
+    
+    private Set<String> collectNames(Collection<Ruby> instances) {
+        Set<String> names = new HashSet<String>();
+        
+        for ( Ruby each : instances ) {
+            names.add( "" + each.hashCode() );
+        }
+        
+        return names;
+    }
+
+    @Override
+    public Set<String> getAllRuntimeNames() {
+        return collectNames( getAllInstances() );
     }
 
 }

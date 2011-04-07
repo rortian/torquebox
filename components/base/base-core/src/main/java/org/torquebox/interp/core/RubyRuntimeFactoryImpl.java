@@ -30,21 +30,19 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.jboss.beans.metadata.api.annotations.Create;
 import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.RubyModule;
+import org.jruby.ast.executable.Script;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.util.ClassCache;
-
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RuntimeInitializer;
 
@@ -67,7 +65,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     private ClassLoader classLoader;
 
     /** Shared interpreter class cache. */
-    private ClassCache<?> classCache;
+    private ClassCache<Script> classCache;
 
     /** Application name. */
     private String applicationName;
@@ -259,16 +257,11 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     /**
      * Create a new instance of a fully-initialized runtime.
      */
-    @Create(ignored = true)
-    public synchronized Ruby create() throws Exception {
-        
+    public synchronized Ruby createInstance(String contextInfo) throws Exception {
+
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
-        if (this.classCache == null) {
-            this.classCache = new ClassCache<Object>( getClassLoader() );
-        }
-
-        config.setClassCache( classCache );
+        config.setClassCache( getClassCache() );
         config.setLoadServiceCreator( new VFSLoadServiceCreator() );
         if (this.rubyVersion != null) {
             config.setCompatVersion( this.rubyVersion );
@@ -350,27 +343,72 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         }
 
         config.setLoadPaths( loadPath );
+        
+        long startTime = logRuntimeCreationStart( config, contextInfo );
 
-        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + 
-                  ", compile_mode: " + config.getCompileMode() + ")" );
+        Ruby runtime = null;
+        try {
+            runtime = Ruby.newInstance( config );
+            runtime.getLoadService().require( "java" );
 
-        Ruby runtime = Ruby.newInstance( config );
-        runtime.getLoadService().require("java"); 
+            prepareRuntime( runtime );
 
-        prepareRuntime( runtime );
+            if (this.initializer != null) {
+                this.initializer.initialize( runtime );
+            } else {
+                log.warn( "No initializer set for runtime" );
+            }
 
-        if (this.initializer != null) {
-            this.initializer.initialize( runtime );
-        } else {
-            log.warn( "No initializer set for runtime" );
+            performRuntimeInitialization( runtime );
+            return runtime;
+        } finally {
+            if (runtime != null) {
+                this.undisposed.add( runtime );
+            }
+            
+            logRuntimeCreationComplete( config, contextInfo, startTime );
         }
-
-        performRuntimeInitialization( runtime );
-        return runtime;
+    }
+    
+    private long logRuntimeCreationStart(RubyInstanceConfig config, String contextInfo) {
+        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo ) + ")" );
+        return System.currentTimeMillis();
+    }
+    
+    private void logRuntimeCreationComplete(RubyInstanceConfig config, String contextInfo, long startTime) {
+        long elapsedMillis = System.currentTimeMillis() - startTime;
+        double elapsedSeconds = Math.floor( (elapsedMillis * 1.0) / 10.0 ) / 100;
+        log.info( "Created ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo ) + ") in " + elapsedSeconds + "s" );
+    }
+    
+    protected String getFullContext(String contextInfo) {
+        String fullContext = null;
+        
+        if ( this.applicationName != null ) {
+            fullContext = "app: " + this.applicationName;
+        }
+        
+        if ( contextInfo != null ) {
+            if ( fullContext != null ) {
+                fullContext += ", ";
+            } else {
+                fullContext = "";
+            }
+            
+            fullContext += "context: " + contextInfo;
+        }
+        
+        if ( fullContext == null ) {
+            fullContext = "";
+        } else {
+            fullContext = ", " + fullContext;
+        }
+        
+        return fullContext;
     }
 
     @Override
-    public synchronized void dispose(Ruby instance) {
+    public synchronized void destroyInstance(Ruby instance) {
         if (undisposed.remove( instance )) {
             instance.tearDown( false );
         }
@@ -393,7 +431,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         JavaEmbedUtils.invokeMethod( runtime, torqueBoxModule, "application_name=", new Object[] { applicationName }, void.class );
 
     }
-    
+
     private void prepareRuntime(Ruby runtime) {
         runtime.getLoadService().require( "rubygems" );
         runtime.evalScriptlet( "require %q(torquebox-vfs)" );
@@ -426,7 +464,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             env.remove( "GEM_HOME" );
             gemPath = null;
         }
-        
+
         if (gemPath != null) {
             env.put( "GEM_PATH", gemPath );
             env.put( "GEM_HOME", gemPath );
@@ -497,11 +535,19 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     public List<String> getLoadPaths() {
         return this.loadPaths;
     }
+    
+    public void create() {
+        this.classCache = new ClassCache<Script>( getClassLoader() );
+    }
 
     public synchronized void destroy() {
         for (Ruby ruby : undisposed) {
-            dispose( ruby );
+            destroyInstance( ruby );
         }
+    }
+    
+    public ClassCache getClassCache() {
+        return this.classCache;
     }
 
 }

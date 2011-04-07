@@ -95,6 +95,7 @@ Capistrano::Configuration.instance.load do
         run "test -d #{jboss_home}",                               :roles=>[ :app ]
         run "test -d #{jboss_home}/server/#{jboss_config}",        :roles=>[ :app ]
         run "test -w #{jboss_home}/server/#{jboss_config}/deploy", :roles=>[ :app ]
+        run "test -w #{torquebox_home}/apps", :roles=>[ :app ]
         unless ( [ :initd, :binscripts ].include?( jboss_control_style.to_sym ) )
           fail "invalid jboss_control_style: #{jboss_control_style}"
         end
@@ -113,7 +114,7 @@ Capistrano::Configuration.instance.load do
     
         dd_str = YAML.dump_stream( dd )
 
-        dd_file = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}-knob.yml"
+        dd_file = "#{torquebox_home}/apps/#{application}-knob.yml"
         dd_tmp_file = "#{dd_file}.tmp"
         
         cmd =  "cat /dev/null > #{dd_tmp_file}"

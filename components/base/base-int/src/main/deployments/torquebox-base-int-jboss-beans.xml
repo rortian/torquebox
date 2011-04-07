@@ -31,7 +31,9 @@
   
   <bean name="RubyApplicationClassLoaderDeployer"  class="org.torquebox.base.deployers.RubyApplicationClassLoaderDeployer"/>
   
-  <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
+  <bean name="TorqueBox"                         class="org.torquebox.TorqueBox">
+    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
+  </bean>
   
   <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
   
@@ -73,4 +75,14 @@
   </bean>
 
   <bean name="RubyApplicationDeployer"           class="org.torquebox.base.deployers.RubyApplicationDeployer"/>
+
+  <bean name="ServicesLoadPathConfigurator" class="org.torquebox.interp.deployers.LoadPathDeployer">
+    <property name="loadPaths">
+      <list elementClass="java.lang.String">
+        <value>app/services</value>
+        <value>services</value>
+      </list>
+    </property>
+  </bean>
+
 </deployment>
