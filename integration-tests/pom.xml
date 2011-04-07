@@ -16,6 +16,7 @@
 
   <properties>
     <version.arquillian>1.0.0.Alpha5</version.arquillian>
+    <version.org.jboss.shrinkwrap>1.0.0-alpha-12</version.org.jboss.shrinkwrap>
     <version.haml>~&gt;3.0</version.haml>
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
     <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
@@ -27,6 +28,21 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-api</artifactId>
+        <version>${version.org.jboss.shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-spi</artifactId>
+        <version>${version.org.jboss.shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-impl-base</artifactId>
+        <version>${version.org.jboss.shrinkwrap}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -71,6 +87,7 @@
       <artifactId>jboss-server-manager</artifactId>
       <version>${version.jboss-server-manager}</version>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
