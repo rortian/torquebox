@@ -64,7 +64,7 @@ public abstract class AbstractIntegrationTestCase extends AbstractTorqueBoxTestC
         JavaArchive archive = ShrinkWrap.create( JavaArchive.class, base + ".jar" );
         ClassLoader classLoader = AbstractIntegrationTestCase.class.getClassLoader();
         URL deploymentDescriptorUrl = classLoader.getResource( name );
-        archive.addResource( deploymentDescriptorUrl, "/META-INF/" + tail );
+        archive.addAsResource( deploymentDescriptorUrl, "/META-INF/" + tail );
         return archive;
     }
 

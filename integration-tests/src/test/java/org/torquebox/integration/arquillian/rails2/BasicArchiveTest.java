@@ -52,7 +52,7 @@ public class BasicArchiveTest extends AbstractIntegrationTestCase {
         torqueboxYamlText.append( "  context: /archive-rails\n" );
 
         Asset torqueboxYaml = new StringAsset( torqueboxYamlText.toString() );
-        archive.addResource( torqueboxYaml, "config/torquebox.yml" );
+        archive.addAsResource( torqueboxYaml, "config/torquebox.yml" );
 
         return archive;
     }
@@ -85,7 +85,7 @@ public class BasicArchiveTest extends AbstractIntegrationTestCase {
             if (child.isDirectory()) {
                 importDirectory( archive, child, childPath );
             } else {
-                archive.addResource( child, childPath );
+                archive.addAsResource( child, childPath );
             }
         }
     }

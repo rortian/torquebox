@@ -56,7 +56,7 @@ public abstract class AbstractOnTheFlyArchivingTestCase extends AbstractIntegrat
             if (child.isDirectory()) {
                 importDirectory( archive, child, childPath );
             } else {
-                archive.addResource( child, childPath );
+                archive.addAsResource( child, childPath );
             }
         }
     }
