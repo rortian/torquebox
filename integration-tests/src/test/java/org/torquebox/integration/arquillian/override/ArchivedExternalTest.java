@@ -26,7 +26,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 @RunAsClient
 public class ArchivedExternalTest extends ExplodedExternalTest {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return createDeployment( "sinatra/archived-external-knob.yml" );
     }

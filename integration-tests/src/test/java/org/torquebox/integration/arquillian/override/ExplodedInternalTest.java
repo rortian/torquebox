@@ -26,7 +26,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 @RunAsClient
 public class ExplodedInternalTest extends AbstractOverrideTestCase {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() throws Exception {
         return createDeployment( "sinatra/exploded-internal-knob.yml" );
     }

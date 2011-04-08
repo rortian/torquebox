@@ -37,7 +37,7 @@ import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 @RunAsClient
 public class BasicProductionTest extends AbstractIntegrationTestCase {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return createDeployment( "rails2/basic-production-knob.yml" );
     }

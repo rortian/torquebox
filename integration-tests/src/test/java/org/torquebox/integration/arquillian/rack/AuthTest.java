@@ -36,7 +36,7 @@ import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 @RunAsClient
 public class AuthTest extends AbstractIntegrationTestCase {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return createDeployment( "rack/basic-auth-knob.yml" );
     }

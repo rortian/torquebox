@@ -37,7 +37,7 @@ import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 @RunAsClient
 public class BasicArchiveTest extends AbstractIntegrationTestCase {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() throws Exception {
         JavaArchive archive = ShrinkWrap.create( JavaArchive.class, "archive.knob" );
 

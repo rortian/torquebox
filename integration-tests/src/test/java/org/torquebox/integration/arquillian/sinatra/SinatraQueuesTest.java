@@ -31,7 +31,7 @@ import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 @RunAsClient
 public class SinatraQueuesTest extends AbstractIntegrationTestCase {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return createDeployment( "sinatra/queues-knob.yml" );
     }

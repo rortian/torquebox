@@ -38,7 +38,7 @@ import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 @RunAsClient
 public class ServicesTest extends AbstractIntegrationTestCase {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return createDeployment( "alacarte/services-knob.yml" );
     }

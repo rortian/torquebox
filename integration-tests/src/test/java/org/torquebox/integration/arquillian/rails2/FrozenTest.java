@@ -37,7 +37,7 @@ public class FrozenTest extends AbstractIntegrationTestCase {
 
     private static final String[] GEM_NAMES = { "railties", "activesupport", "actionpack", "activerecord", "actionmailer", "activeresource", };
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return createDeployment( "rails2/frozen-knob.yml" );
     }

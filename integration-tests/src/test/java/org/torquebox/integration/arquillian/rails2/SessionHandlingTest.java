@@ -27,7 +27,7 @@ import org.torquebox.integration.arquillian.rails.CommonSessionHandlingTestCase;
 @RunAsClient
 public class SessionHandlingTest extends CommonSessionHandlingTestCase {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return createDeployment( "rails2/basic-knob.yml" );
     }

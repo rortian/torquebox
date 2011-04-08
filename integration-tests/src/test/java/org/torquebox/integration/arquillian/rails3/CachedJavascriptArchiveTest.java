@@ -34,7 +34,7 @@ import org.torquebox.integration.arquillian.AbstractOnTheFlyArchivingTestCase;
 @RunAsClient
 public class CachedJavascriptArchiveTest extends AbstractOnTheFlyArchivingTestCase {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() throws Exception {
         File exploded = new File( System.getProperty( "user.dir" ) + "/apps/rails3/torque-174.knob" );
 
